@@ -74,14 +74,16 @@ class measure_marker:
           print e
         self.timenow = rospy.Time.now()
         rows,cols,depth = frame.shape
+        gray = cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
         frame_out = frame.copy()
         if rows>0:
-            corns,ids,rejected = cv2.aruco.detectMarkers(frame,self.dict)
+            corns,ids,rejected = cv2.aruco.detectMarkers(gray,self.dict)
             
             if ids is not None:
-                rvecs,tvecs = cv2.aruco.estimatePoseSingleMarkers(corns[0],.025,self.K,self.D)
+                rvecs,tvecs = cv2.aruco.estimatePoseSingleMarkers(corns,.025,self.K,self.D)
                 
                 frame_out =cv2.aruco.drawDetectedMarkers(frame.copy(),corns,ids)
+                frame_out = cv2.aruco.drawAxis(frame_out,self.K,self.D,rvecs,tvecs,.2)
 
 
                 #print rvecs
